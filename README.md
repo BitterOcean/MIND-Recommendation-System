@@ -1,12 +1,16 @@
-# MIND-Recommendation-System
+# 📰 News Recommendation System
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
+![AUC](https://img.shields.io/badge/AUC-61.26%25-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 ### Content-Based, Collaborative & Hybrid Models on MIND Dataset
 
-A comparative study of **recommender system strategies** for news articles using the **MIND dataset**, focusing on both **accuracy** and **beyond-accuracy metrics**.
+A comparative study of recommender system strategies for news articles using the **MIND dataset**, focusing on both **accuracy** and **beyond-accuracy metrics**.
 
 ---
 
-## Table of Contents
+## 📚 Table of Contents
 
 * [1. Introduction](#1-introduction)
 * [2. Problem Statement](#2-problem-statement)
@@ -17,189 +21,132 @@ A comparative study of **recommender system strategies** for news articles using
 * [7. Results](#7-results)
 * [8. Discussion](#8-discussion)
 * [9. Conclusion](#9-conclusion)
-* [10. Future Work](#10-future-work)
+* [10. How to Run](#10-how-to-run)
+* [11. Future Work](#11-future-work)
 
 ---
 
 # 1. Introduction
 
-Recommender systems are a core component of modern digital platforms, powering personalized experiences across news, e-commerce, and media.
+Recommender systems are a core component of modern digital platforms.
 
-This project explores and compares three major recommendation strategies:
+This project compares:
 
 * **Content-Based Filtering (CBF)**
 * **Collaborative Filtering (CF)**
 * **Hybrid Models**
 
-The goal is to evaluate how these approaches perform in a **news recommendation setting** using the **MIND dataset**, a widely used benchmark in the field .
-
-[⬆️ Back to Top](#table-of-contents)
+on the **MIND dataset**, a widely used benchmark in news recommendation.
 
 ---
 
 # 2. Problem Statement
 
-Designing an effective news recommender involves several challenges:
-
 ### Challenges
 
-* **Data Sparsity** → Most users interact with very few articles
-* **Cold-Start Problem** → Many articles have no interaction history
-* **Popularity Bias** → Popular items dominate recommendations
-* **Trade-offs** → Accuracy vs diversity vs novelty
+* Data sparsity
+* Cold-start problem
+* Popularity bias
+* Trade-offs between accuracy, diversity, and novelty
 
 ### Goal
 
-Build and compare multiple recommender systems to answer:
-
-> How do Content-Based, Collaborative, and Hybrid approaches perform in terms of both accuracy and beyond-accuracy metrics?
-
-[⬆️ Back to Top](#table-of-contents)
+Evaluate and compare recommender models across multiple metrics.
 
 ---
 
 # 3. Approach
 
-We implemented a **multi-model comparison pipeline**:
-
-## Models Compared
+Models implemented:
 
 * Popularity Baseline
-* Content-Based Recommender (TF-IDF)
+* Content-Based (TF-IDF)
 * Collaborative Filtering (SVD)
-* Weighted Hybrid Model
+* Hybrid Model
 
-## Strategy
+Pipeline:
 
-1. Analyze dataset characteristics (EDA)
-2. Implement each model independently
-3. Evaluate using multiple metrics
-4. Compare across datasets (MIND Small & Large)
-
-[⬆️ Back to Top](#table-of-contents)
+1. EDA
+2. Model implementation
+3. Evaluation
+4. Comparison
 
 ---
 
 # 4. Dataset & EDA
 
-## Dataset: MIND (Microsoft News Dataset)
+## 📊 Dataset: MIND
+
+🔗 https://msnews.github.io/
 
 * ~1M users
 * ~160k articles
-* ~2.2M sessions 
+* ~2.2M sessions
 
-Contains:
+### Key Insights
 
-* Article metadata (title, abstract, category)
-* User interaction logs (clicks, impressions)
+* Long-tail distribution
+* Category imbalance
+* Sparse user interactions
+* Short textual features
 
-## Key Insights from EDA
+👉 Leads to:
 
-* **Long-tail distribution** → Few articles get most clicks
-* **Category imbalance** → News & sports dominate
-* **Short text features** → Titles are short, abstracts vary
-* **Sparse interactions** → Most users have limited history
-
-📊 Example:
-
-* ~85% of articles receive zero clicks in training 
-
-👉 These insights directly influenced model design:
-
-* Use CBF for cold-start
-* Expect CF to struggle with sparsity
-* Combine models via hybrid approach
-
-[⬆️ Back to Top](#table-of-contents)
+* Strong CBF performance
+* Weak CF in small data
+* Need for hybrid model
 
 ---
 
 # 5. Methods
 
-## 5.1 Popularity Baseline
+## Baseline
 
-* Scores items by total click count
-* Non-personalized
-* Strong baseline due to popularity bias
+* Popularity-based ranking
 
----
+## Content-Based (CBF)
 
-## 5.2 Content-Based Filtering (CBF)
+* TF-IDF on title, abstract, category
+* Cosine similarity
+* Recency-weighted user profile
 
-* TF-IDF representation of:
+## Collaborative Filtering (CF)
 
-  * Title
-  * Abstract
-  * Category
-  * Subcategory
-* User profile:
+* User-item matrix
+* Truncated SVD (32 dims)
+* Embedding-based similarity
 
-  * Recency-weighted history
-* Scoring:
+## Hybrid
 
-  * Cosine similarity
+[
+S = \omega_{cf} \cdot norm(S_{cf}) + \omega_{cbf} \cdot norm(S_{cbf})
+]
 
-✔ Handles cold-start
-✔ Strong performance in sparse data
+Best weights:
 
----
-
-## 5.3 Collaborative Filtering (CF)
-
-* User-item interaction matrix
-* Factorized using **Truncated SVD (32 dimensions)**
-* User profile from item embeddings
-
-✔ Captures behavioral patterns
-✘ Cannot handle unseen items (cold-start)
-
----
-
-## 5.4 Hybrid Model
-
-Combines CF and CBF scores:
-
-$$
-S_{final} = \omega_{cf} \cdot norm(S_{cf}) + \omega_{cbf} \cdot norm(S_{cbf})
-$$
-
-* Scores normalized (min-max)
-* Best weights:
-
-  * **CF = 0.1**
-  * **CBF = 0.9**
-
-✔ Combines strengths of both models
-✔ Improves overall performance
-
-[⬆️ Back to Top](#table-of-contents)
+* CF = 0.1
+* CBF = 0.9
 
 ---
 
 # 6. Evaluation Metrics
 
-## Accuracy Metrics
+### Accuracy
 
-* **AUC** → overall ranking quality
-* **MRR** → rewards early correct predictions
-* **nDCG@5 / nDCG@10** → ranking quality at top positions
+* AUC
+* MRR
+* nDCG@5 / nDCG@10
 
-## Beyond-Accuracy Metrics
+### Beyond-Accuracy
 
-* **Novelty** → recommends less popular items
-* **Diversity (category/subcategory)** → variety of recommendations
-
-👉 Important insight:
-
-> Accuracy alone is not enough — recommendation quality is multi-dimensional.
-
-[⬆️ Back to Top](#table-of-contents)
+* Novelty
+* Diversity
 
 ---
 
 # 7. Results
 
-## MIND Small Dataset
+## MIND Small
 
 | Model      | AUC        | MRR        | nDCG@10    | Novelty |
 | ---------- | ---------- | ---------- | ---------- | ------- |
@@ -210,7 +157,7 @@ $$
 
 ---
 
-## MIND Large Dataset
+## MIND Large
 
 | Model      | AUC        | MRR        | nDCG@10    |
 | ---------- | ---------- | ---------- | ---------- |
@@ -219,53 +166,127 @@ $$
 | CBF        | 0.6059     | 0.3300     | 0.3711     |
 | **Hybrid** | **0.6084** | **0.3272** | **0.3692** |
 
-📌 Key finding:
-
-> Hybrid > Content-Based > Collaborative > Baseline 
-
-[⬆️ Back to Top](#table-of-contents)
+📌 Hybrid performs best overall.
 
 ---
 
 # 8. Discussion
 
-### Key Insights
+* CBF dominates in sparse data
+* CF improves with scale
+* Hybrid balances both
 
-* **CBF is strongest in sparse settings**
-* **CF improves with more data**
-* **Hybrid provides consistent gains**
+Trade-offs:
 
-### Trade-offs
-
-* High accuracy → lower diversity
-* High novelty → less popular items
-
-Hybrid balances these competing objectives.
-
-[⬆️ Back to Top](#table-of-contents)
+* Accuracy vs diversity
+* Novelty vs popularity
 
 ---
 
 # 9. Conclusion
 
-* Content-based filtering is the **strongest standalone model**
-* Collaborative filtering requires **large-scale data**
-* Hybrid models provide **best overall performance**
-
-Most importantly:
-
-> No single metric fully captures recommendation quality.
-
-[⬆️ Back to Top](#table-of-contents)
+* CBF = strongest standalone
+* CF = data-dependent
+* Hybrid = best overall
 
 ---
 
-# 10. Future Work
+# 10. How to Run
 
-* Neural Collaborative Filtering (NCF)
-* Transformer-based embeddings (BERT / LLMs)
-* Temporal-aware recommendations
-* Better hybrid fusion strategies
+## 📥 1. Download Dataset
+
+Download from:
+
+👉 https://msnews.github.io/
+
+Files needed:
+
+* MINDsmall_train.zip
+* MINDsmall_dev.zip
+
+---
+
+## 📂 2. Extract Dataset
+
+```bash
+data/
+├── MINDsmall_train/
+│   ├── behaviors.tsv
+│   ├── news.tsv
+│   ├── entity_embedding.vec
+│   └── relation_embedding.vec
+│
+├── MINDsmall_dev/
+│   ├── behaviors.tsv
+│   ├── news.tsv
+│   ├── entity_embedding.vec
+│   └── relation_embedding.vec
+```
+
+### File Descriptions
+
+* **behaviors.tsv** → user clicks & impressions
+* **news.tsv** → article metadata
+* **entity_embedding.vec** → entity embeddings
+* **relation_embedding.vec** → relation embeddings
+
+⚠️ Only `behaviors.tsv` and `news.tsv` are used in this project.
+
+---
+
+## 📦 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ▶️ 4. Run
+
+```bash
+python run_all.py
+```
+
+---
+
+## ⚙️ Optional
+
+```bash
+python run_all.py --max-eval-sessions 5000
+```
+
+---
+
+## 💾 Save Results
+
+```bash
+python run_all.py --json-output results.json
+```
+
+---
+
+## 📁 Project Structure
+
+```bash
+project-root/
+├── run_all.py
+├── requirements.txt
+├── data/
+├── baseline/
+├── collaborative_filtering/
+├── content_based_filtering/
+├── hybrid_filtering/
+```
+
+---
+
+# 11. Future Work
+
+* Neural CF
+* Transformer embeddings
+* Temporal modeling
+* Better hybrid strategies
 
 ---
 
