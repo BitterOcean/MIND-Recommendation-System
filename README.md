@@ -2,7 +2,7 @@
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![AUC](https://img.shields.io/badge/AUC-61.26%25-brightgreen)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+![License](https://img.shields.io/badge/License-GPL3-green.svg)
 
 ### Content-Based, Collaborative & Hybrid Models on MIND Dataset
 
